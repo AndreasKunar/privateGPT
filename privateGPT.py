@@ -26,8 +26,16 @@ hide_source_details = os.environ.get('HIDE_SOURCE_DETAILS',"False") != "False"
 if os.environ.get('LANGCHAIN_DEBUG',"False") != "False":
     langchain.debug=True
 
-
 from constants import CHROMA_SETTINGS
+
+# local response-streaming callback for GPT4All.py - todo for llama.cpp
+def local_callback(token_id, response):
+    try:
+        print(response.decode('utf-8'))
+    except:
+        response='?'      # gracefully handle decoding issues
+        print(response)
+    return True
 
 def main():
     # moved all command line arguments to .env
@@ -39,9 +47,11 @@ def main():
     # Prepare the LLM
     match model_type:
         case "LlamaCpp":
-            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=callbacks, verbose=False, temperature=model_temp)
+            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=callbacks, temperature=model_temp)
         case "GPT4All":
-            llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', callbacks=callbacks, verbose=False, temp=model_temp)
+            llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', callbacks=callbacks, temp=model_temp)
+            # response streaming callback directly from GPT4All.py (additionaly to llangchain callbacks)
+            llm.client.model._response_callback = local_callback
         case _default:
             print(f"Model {model_type} not supported!")
             exit

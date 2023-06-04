@@ -164,8 +164,6 @@ def main():
                 textFile.page_content = regex.sub(r'(?<!\n)\n(?!\n)', ' ', textFile.page_content)
                 # remove multiple \n from texts
                 textFile.page_content = regex.sub(r'\n{2,}', '\n', textFile.page_content)
-                # substitute UTF-8 \ufb01 with 'fi'
-                textFile.page_content = regex.sub(r'\ufb01', 'fi', textFile.page_content)
         print(f"Creating embeddings. May take some minutes...")
         db = Chroma.from_documents(texts, embeddings, persist_directory=persist_directory, client_settings=CHROMA_SETTINGS)
     db.persist()

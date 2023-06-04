@@ -41,7 +41,7 @@ Please remember to use `conda activate` ... whenever you use privateGPT later!
   + `LANGCHAIN_DEBUG`, default False
 + Tweaks for trying to avoid halucinations, if privateGPT finds nothing of relevance in the source_documents
   + used prompting technique suggested by [Guillaume-Fgt](https://github.com/Guillaume-Fgt) in [issue#517](https://github.com/imartinez/privateGPT/issues/517)
-+ tried to polish the output-readability a bit (needs more work)
++ tried to polish the output-readability a bit, including base LLM callbacks (needs more work)
 
 ***for `ingest.py` (and `.env`):***
 
@@ -53,12 +53,13 @@ Please remember to use `conda activate` ... whenever you use privateGPT later!
     + pip install spacy
     + python -m spacy download en_core_web_sm
   + uses [spaCy](https://spacy.io/) for chunk-splitting
-  + removes single \n and other potentially strange characters (e.g. GPT4all is crashing for ligature-fi (UTF-8 \\ufb01) instead of 'fi')
+  + removes single \n, and replaces remaining multiple \n with single \n
 
 ## Ideas not yet implemented
 
++ make llama.cpp work (need to fix GGML version issues)
 + GPT4all yields much worse result than chatGPT
-  + test llama.cpp models (need to fix GGML version issues)
+  + test llama.cpp models
   + maybe enable cloud chatGPT via configuration
 + output needs improvements (robustnes, readability)
   + reponse-streaming issues from LLM needs a fix, e.g. gpt4all is low-level streaming via print, causing aborts - this needs to move to more robust langchain streaming
