@@ -48,12 +48,18 @@ Please remember to use `conda activate` ... whenever you use privateGPT later!
 + tweaked `ingest.py` and `.env` for changeable ingest-chunking
   + `CHUNK_SIZE`, default 500 and `CHUNK_OVERLAP`, default 50
 + re-enabled `ingest.py` for reading `.docx` (imartinez commented it out)
++ `ingestSpaCy.py` is an improved version of `ingest.py` for improved chunck quality
+  + needs additional one-time installs before use:
+    + pip install spacy
+    + python -m spacy download en_core_web_sm
+  + uses [spaCy](https://spacy.io/) for chunk-splitting
+  + removes single \n and other potentially strange characters (e.g. GPT4all is crashing for ligature-fi (UTF-8 \\ufb01) instead of 'fi')
 
 ## Ideas not yet implemented
 
-+ need to improve ingest to minimize hallucinations via better chunck-quality
-  + upon ingestion remove useless \\n and other weird symbols - e.g. GPT4all crashing for ligature fi (UTF-8 \\ufb01) instead of 2 characters.
-  + not sure how to improve chunk-speraration points for keeping a better context
++ GPT4all yields much worse result than chatGPT
+  + test llama.cpp models (need to fix GGML version issues)
+  + maybe enable cloud chatGPT via configuration
 + output needs improvements (robustnes, readability)
   + reponse-streaming issues from LLM needs a fix, e.g. gpt4all is low-level streaming via print, causing aborts - this needs to move to more robust langchain streaming
   + better display of sources+their details after response
