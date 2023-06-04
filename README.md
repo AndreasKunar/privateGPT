@@ -61,9 +61,8 @@ Please remember to use `conda activate` ... whenever you use privateGPT later!
 + GPT4all yields much worse result than chatGPT
   + test llama.cpp models
   + maybe enable cloud chatGPT via configuration
-+ output needs improvements (robustnes, readability)
-  + reponse-streaming issues from LLM needs a fix, e.g. gpt4all is low-level streaming via print, causing aborts - this needs to move to more robust langchain streaming
-  + better display of sources+their details after response
++ output improvements - better display of sources+their details after response
++ maybe gradio webUI
 &nbsp;
 
 &nbsp;
