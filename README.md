@@ -1,45 +1,57 @@
 # My Changes to privateGPT
+
 This is a fork of [imartinez/privateGPT] to play around with my ideas for changes/improvements.
 
-# Clarifications - Setup
-Before installing anything - `conda create` a virtual environment! and use the python-version which (I hope) works with all the requirements.
+## Clarifications - Setup
+
+***Before installing anything*** - `conda create` a virtual environment and use the python-version which (I hope) works with all the requirements.
+
 ```shell
 conda create -n privategpt python=3.10.9
 conda activate privategpt
 ```
+
 Next, on M1/M2 Macs install pytorch,...
+
 ```shell
 pip3 install torch torchvision torchaudio
 ```
+
 continue with the installation according to in the main branch
+
 ```shell
 pip3 install -r requirements.txt
 ```
-Don't forget to create the `.env` file (e.g. by copying `example.env`) and to tweak it (e.g. temperature)!
-<br/>
+
+Don't forget to create the `.env` file (e.g. by copying `example.env`) and then maybe tweak it (e.g. temperature)!&nbsp;
+
 Please remember to use `conda activate` ... whenever you use privateGPT later!
 
-# Changes Implemented
+## Changes Implemented
 
-  - moved all commandline parameters to the .env file, no more commandline parameter parsing
-    * `MUTE_STREAM`, `HIDE_SOURCE`
-  - added LLM temperature parameter
-    * `MODEL_TEMP` with default 0.8 - I use .4 in `example.env` to reduce halucinations
-  - refined sources into filename and details
-    * `HIDE_SOURCE` for everything and `HIDE_SOURCE_DETAILS` to have filenames only or also the details
-  - Tweaks for trying to avoid halucinations, if privateGPT finds nothing of relevance in the source_documents
-    * used prompting technique suggested in https://github.com/imartinez/privateGPT/issues/517
-  - tried to polish the output-readability a bit
++ moved all commandline parameters to the `.env` file, no more commandline parameter parsing
+  + `MUTE_STREAM`, `HIDE_SOURCE`
++ added LLM temperature parameter
+  + `MODEL_TEMP` with default 0.8 - I use .4 in `example.env` to reduce halucinations
++ refined sources into filename and details
+  + `HIDE_SOURCE` for everything and `HIDE_SOURCE_DETAILS` to have filenames only or also the details
++ Tweaks for trying to avoid halucinations, if privateGPT finds nothing of relevance in the source_documents
+  + used prompting technique suggested in https://github.com/imartinez/privateGPT/issues/517
++ tried to polish the output-readability a bit (needs more work)
++ tweaked `ingest.py` and `.env` for changeable ingest-chunking
+  + `CHUNK_SIZE`, default 500 and `CHUNK_OVERLAP`, default 50
 
-# Ideas not yet implemented
-  - Web UI based on [streamlit](https://streamlit.io), also as Python a programming exercise for me
-    * install dependencies + add to requirements.txt
-    * build privateGPTGUI.py
-    * GUI for nice separation of output and sources (maybe do hide/show button)
+## Ideas not yet implemented
 
-<br/>
-<h2> <b> ---------- The Original privateGPT README ---------- </b> </h2>
-<br/>
++ need to improve ingest to minimize hallucinations
++ output needs improvements
+  + reponse-streaming issues from LLM needs a fix, e.g. gpt4all is low-level streaming via print, causing aborts - this needs to move to more robust langchain streaming
+  + better display of sources+their details after response
+&nbsp;
+
+&nbsp;
+
+---------- the original `imartinez/privateGPT` README starts here ---------- &nbsp;
 
 # privateGPT
 Ask questions to your documents without an internet connection, using the power of LLMs. 100% private, no data leaves your execution environment at any point. You can ingest documents and ask questions without an internet connection!
