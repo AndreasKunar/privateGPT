@@ -1,6 +1,6 @@
 # My Changes to privateGPT
 
-This is a fork of [imartinez/privateGPT] to play around with my ideas for changes/improvements.
+This is my fork of [imartinez/privateGPT](https://github.com/imartinez/privateGPT) for playing around with my ideas for changes/improvements.
 
 ## Clarifications - Setup
 
@@ -29,22 +29,32 @@ Please remember to use `conda activate` ... whenever you use privateGPT later!
 
 ## Changes Implemented
 
+***for `privateGPT.py` (and `.env`):***
+
 + moved all commandline parameters to the `.env` file, no more commandline parameter parsing
   + `MUTE_STREAM`, `HIDE_SOURCE`
-+ added LLM temperature parameter
++ added LLM temperature parameter to `.env`
   + `MODEL_TEMP` with default 0.8 - I use .4 in `example.env` to reduce halucinations
-+ refined sources into filename and details
++ refined `.env` sources parameter into filename and details
   + `HIDE_SOURCE` for everything and `HIDE_SOURCE_DETAILS` to have filenames only or also the details
++ added `.env` parameter for langchain-debugging
+  + `LANGCHAIN_DEBUG`, default False
 + Tweaks for trying to avoid halucinations, if privateGPT finds nothing of relevance in the source_documents
-  + used prompting technique suggested in https://github.com/imartinez/privateGPT/issues/517
+  + used prompting technique suggested by [Guillaume-Fgt](https://github.com/Guillaume-Fgt) in [issue#517](https://github.com/imartinez/privateGPT/issues/517)
 + tried to polish the output-readability a bit (needs more work)
+
+***for `ingest.py` (and `.env`):***
+
 + tweaked `ingest.py` and `.env` for changeable ingest-chunking
   + `CHUNK_SIZE`, default 500 and `CHUNK_OVERLAP`, default 50
++ re-enabled `ingest.py` for reading `.docx` (imartinez commented it out)
 
 ## Ideas not yet implemented
 
-+ need to improve ingest to minimize hallucinations
-+ output needs improvements
++ need to improve ingest to minimize hallucinations via better chunck-quality
+  + upon ingestion remove useless \\n and other weird symbols - e.g. GPT4all crashing for ligature fi (UTF-8 \\ufb01) instead of 2 characters.
+  + not sure how to improve chunk-speraration points for keeping a better context
++ output needs improvements (robustnes, readability)
   + reponse-streaming issues from LLM needs a fix, e.g. gpt4all is low-level streaming via print, causing aborts - this needs to move to more robust langchain streaming
   + better display of sources+their details after response
 &nbsp;
