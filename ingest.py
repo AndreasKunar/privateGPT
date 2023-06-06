@@ -32,12 +32,11 @@ load_dotenv()
 
 
 # Load environment variables
-persist_directory = os.environ.get('PERSIST_DIRECTORY')
+persist_directory = os.environ.get('PERSIST_DIRECTORY','db')
 source_directory = os.environ.get('SOURCE_DIRECTORY', 'source_documents')
-embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME')
+embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME','all-MiniLM-L6-v2')
 chunk_size = int(os.environ.get('CHUNK_SIZE',500))
 chunk_overlap= int(os.environ.get('CHUNK_OVERLAP',50))
-
 
 # Custom document loaders
 class MyElmLoader(UnstructuredEmailLoader):

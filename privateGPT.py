@@ -11,13 +11,12 @@ import os
 
 load_dotenv()
 
-embeddings_model_name = os.environ.get("EMBEDDINGS_MODEL_NAME")
-persist_directory = os.environ.get('PERSIST_DIRECTORY')
-
-model_type = os.environ.get('MODEL_TYPE')
-model_path = os.environ.get('MODEL_PATH')
-model_n_ctx = os.environ.get('MODEL_N_CTX')
-model_temp = os.environ.get('MODEL_TEMP',0.8)
+persist_directory = os.environ.get('PERSIST_DIRECTORY','db')
+model_type = os.environ.get('MODEL_TYPE','GPT4All')
+model_path = os.environ.get('MODEL_PATH','models/ggml-gpt4all-j-v1.3-groovy.bin')
+embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME','all-MiniLM-L6-v2')
+model_n_ctx = os.environ.get('MODEL_N_CTX',5000)
+model_temp = os.environ.get('MODEL_TEMP',0.4)
 target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
 mute_stream = os.environ.get('MUTE_STREAM',"False") != "False"
 hide_source = os.environ.get('HIDE_SOURCE',"False") != "False"
@@ -47,14 +46,14 @@ def main():
     # Prepare the LLM
     match model_type:
         case "LlamaCpp":
-            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=callbacks, temperature=model_temp)
+            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=callbacks, temperature=model_temp) # type: ignore
         case "GPT4All":
-            llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', callbacks=callbacks, temp=model_temp)
+            llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', callbacks=callbacks, temp=model_temp) # type: ignore
             # response streaming callback directly from GPT4All.py (additionaly to llangchain callbacks)
             llm.client.model._response_callback = local_callback
         case _default:
             print(f"Model {model_type} not supported!")
-            exit
+            exit()
             
     prompt_template = """Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
@@ -81,7 +80,8 @@ def main():
             break
 
         # Get the answer from the chain and stream-print the result
-        print("\n### Answer by privateGPT via "+os.path.split(model_path)[1]+" with temperature:"+model_temp+":")
+        print("\n### Answer by privateGPT via "+os.path.split(model_path)[1]+" with temperature:"+str(model_temp)+":")
+
         res = qa(query)
         answer, docs = res['result'], [] if hide_source else res['source_documents']
 

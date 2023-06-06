@@ -23,7 +23,7 @@ continue with the installation according to in the main branch
 pip3 install -r requirements.txt
 ```
 
-Don't forget to create the `.env` file (e.g. by copying `example.env`) and then maybe tweak it (e.g. temperature)!&nbsp;
+Create/tweak the `.env` file (e.g. by copying `example.env`) for any non-default parameter-settings&nbsp;
 
 Please remember to use `conda activate` ... whenever you use privateGPT later!
 
