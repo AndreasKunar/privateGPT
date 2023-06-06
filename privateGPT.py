@@ -13,7 +13,7 @@ load_dotenv()
 
 persist_directory = os.environ.get('PERSIST_DIRECTORY','db')
 model_type = os.environ.get('MODEL_TYPE','GPT4All')
-model_path = os.environ.get('MODEL_PATH','models/ggml-gpt4all-j-v1.3-groovy.bin')
+model_path = os.environ.get('MODEL_PATH','./models/ggml-gpt4all-j-v1.3-groovy.bin')
 embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME','all-MiniLM-L6-v2')
 model_n_ctx = os.environ.get('MODEL_N_CTX',5000)
 model_temp = os.environ.get('MODEL_TEMP',0.4)
@@ -27,30 +27,34 @@ if os.environ.get('LANGCHAIN_DEBUG',"False") != "False":
 
 from constants import CHROMA_SETTINGS
 
-# local response-streaming callback for GPT4All.py - todo for llama.cpp
+# tweak: use local response streaming callback 
+#        directly from low-level GPT4All.py,
+#        and llangchain callbacks for all other LLMs
+# define C callback function signatures
+import ctypes
+GPT4allResponseCallback = ctypes.CFUNCTYPE(ctypes.c_bool, ctypes.c_int32, ctypes.c_char_p)
+# local GPT4all response-streaming callback
 def local_callback(token_id, response):
-    try:
-        print(response.decode('utf-8'))
-    except:
-        response='?'      # gracefully handle decoding issues
-        print(response)
-    return True
+     # gracefully handle utf-8 decoding issues
+    with response.decode('utf-8') as resp_txt:
+        print(resp_txt)
 
 def main():
+    print("privateGPT: A (tweaked) private GPT-3 alternative for question answering")
     # moved all command line arguments to .env
     embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
     db = Chroma(persist_directory=persist_directory, embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
     retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
-    # activate/deactivate the streaming StdOut callback for LLMs
-    callbacks = [] if mute_stream else [StreamingStdOutCallbackHandler()]
     # Prepare the LLM
     match model_type:
         case "LlamaCpp":
-            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=callbacks, temperature=model_temp) # type: ignore
+            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=[StreamingStdOutCallbackHandler()], temperature=model_temp) # type: ignore
+            # set verbose=False in underlying LlamaCpp.py to surpress llama_print_timings
+            llm.client.verbose = False
         case "GPT4All":
-            llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', callbacks=callbacks, temp=model_temp) # type: ignore
-            # response streaming callback directly from GPT4All.py (additionaly to llangchain callbacks)
-            llm.client.model._response_callback = local_callback
+            llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', callbacks=[], temp=model_temp) # type: ignore
+            # Tweak - insert callback into low-level GPT4All.py
+            llm.client.model._response_callback = GPT4allResponseCallback(local_callback)
         case _default:
             print(f"Model {model_type} not supported!")
             exit()

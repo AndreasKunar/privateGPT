@@ -1,5 +1,6 @@
-# source documents content
+# AK additional ignores: source documents content, .vscode
 source_documents/*
+.vscode/*
 
 # OSX
 .DS_STORE

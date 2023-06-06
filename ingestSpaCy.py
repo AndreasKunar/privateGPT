@@ -28,9 +28,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.docstore.document import Document
 from constants import CHROMA_SETTINGS
 
-
 load_dotenv()
-
 
 # Load environment variables
 persist_directory = os.environ.get('PERSIST_DIRECTORY','db')
@@ -38,7 +36,6 @@ source_directory = os.environ.get('SOURCE_DIRECTORY', 'source_documents')
 embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME','all-MiniLM-L6-v2')
 chunk_size = int(os.environ.get('CHUNK_SIZE',500))
 chunk_overlap= int(os.environ.get('CHUNK_OVERLAP',50))
-
 
 # Custom document loaders
 class MyElmLoader(UnstructuredEmailLoader):
@@ -62,7 +59,6 @@ class MyElmLoader(UnstructuredEmailLoader):
 
         return doc
 
-
 # Map file extensions to document loaders and their arguments
 LOADER_MAPPING = {
     ".csv": (CSVLoader, {}),
@@ -81,7 +77,6 @@ LOADER_MAPPING = {
     ".txt": (TextLoader, {"encoding": "utf8"}),
     # Add more mappings for other file extensions and loaders as needed
 }
-
 
 def load_single_document(file_path: str) -> List[Document]:
     ext = "." + file_path.rsplit(".", 1)[-1]
