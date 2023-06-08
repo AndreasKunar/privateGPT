@@ -27,17 +27,16 @@ if os.environ.get('LANGCHAIN_DEBUG',"False") != "False":
 
 from constants import CHROMA_SETTINGS
 
-# tweak: use local response streaming callback 
-#        directly from low-level GPT4All.py,
-#        and llangchain callbacks for all other LLMs
+# gpt4all tweak - use local response streaming callback 
+#   ... directly from low-level GPT4All.py,
 # define C callback function signatures
 import ctypes
 GPT4allResponseCallback = ctypes.CFUNCTYPE(ctypes.c_bool, ctypes.c_int32, ctypes.c_char_p)
 # local GPT4all response-streaming callback
-def local_callback(token_id, response):
-     # gracefully handle utf-8 decoding issues
-    with response.decode('utf-8') as resp_txt:
-        print(resp_txt)
+def gpt4all_local_callback(token_id, response):
+    # gracefully handle utf-8 decoding issues
+    print(response.decode('utf-8', errors='ignore'))
+    return True
 
 def main():
     print("privateGPT: A (tweaked) private GPT-3 alternative for question answering")
@@ -49,12 +48,12 @@ def main():
     match model_type:
         case "LlamaCpp":
             llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=[StreamingStdOutCallbackHandler()], temperature=model_temp) # type: ignore
-            # set verbose=False in underlying LlamaCpp.py to surpress llama_print_timings
+            # tweak - set verbose=False in underlying LlamaCpp.py to surpress llama_print_timings
             llm.client.verbose = False
         case "GPT4All":
             llm = GPT4All(model=model_path, n_ctx=model_n_ctx, backend='gptj', callbacks=[], temp=model_temp) # type: ignore
-            # Tweak - insert callback into low-level GPT4All.py
-            llm.client.model._response_callback = GPT4allResponseCallback(local_callback)
+            # tweak - insert callback into low-level GPT4All.py
+            llm.client.model._response_callback = GPT4allResponseCallback(gpt4all_local_callback)
         case _default:
             print(f"Model {model_type} not supported!")
             exit()

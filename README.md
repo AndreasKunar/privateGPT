@@ -23,13 +23,7 @@ Continue with the installation according to in the main branch
 pip3 install -r requirements.txt
 ```
 
-***For using lama-models:*** update llama-cpp-python to latest version (for latest model-compatibility)
-
-```shell
-pip3 install --update llama-cpp-python   
-```
-
-... and use the models from [here](https://huggingface.co/TheBloke), also change the `MODEL_PATH` accordingly, as well as `MODEL_TYPE=LlamaCpp` in `.env`
+***For using lama-models:*** use the models from [here](https://huggingface.co/TheBloke), also change the `MODEL_PATH` accordingly, as well as `MODEL_TYPE=LlamaCpp` in `.env`
 &nbsp;
 
 Create/tweak the `.env` file (e.g. by copying `example.env`) for any non-default parameter-settings
@@ -53,6 +47,13 @@ Please remember to use `conda activate` ... whenever you use privateGPT later!
   + used prompting technique suggested by [Guillaume-Fgt](https://github.com/Guillaume-Fgt) in [issue#517](https://github.com/imartinez/privateGPT/issues/517)
 + tried to polish the output-readability a bit, including base LLM callbacks (needs more work)
 + tweaks for making `LlamaCpp` work - Note: llama_cpp/llama.py does NOT run in the Python debugger, aborts loading!
++ also updated requirements.txt for current llama-cpp binding
+
+***built `privateGPTcompare.py` for LLM's answer comparisons:***
+
++ currently hardcoded models (type/path in .env are ignored) - new models can be added in .py-file!
++ output of full LLM prompt, including embeddings
++ no source information options
 
 ***for `ingest.py` (and `.env`):***
 
@@ -69,10 +70,9 @@ Please remember to use `conda activate` ... whenever you use privateGPT later!
 ## Ideas not yet implemented
 
 + GPT4all yields much worse result than chatGPT
-  + evaluating if/which llama.cpp model is better, maybe tweakig prompting
-  + maybe enable cloud chatGPT via configuration
+  + maybe enable cloud chatGPT via new configuration
 + output improvements - better display of sources+their details after response
-+ maybe gradio webUI
++ maybe gradio or other webUI
 &nbsp;
 
 ## Please continue with the original [imartinez/privateGPT/README](https://github.com/imartinez/privateGPT/blob/main/README.md) for more
