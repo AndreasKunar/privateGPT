@@ -47,7 +47,8 @@ def main():
     # Prepare the LLM
     match model_type:
         case "LlamaCpp":
-            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=[StreamingStdOutCallbackHandler()], temperature=model_temp) # type: ignore
+            llm = LlamaCpp(model_path=model_path, n_ctx=model_n_ctx, callbacks=[StreamingStdOutCallbackHandler()], 
+                           temperature=model_temp,n_threads = 4,n_gpu_layers=1) # type: ignore
             # tweak - set verbose=False in underlying LlamaCpp.py to surpress llama_print_timings
             llm.client.verbose = False
         case "GPT4All":
