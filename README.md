@@ -1,3 +1,5 @@
+***This Project is DEPRECIATED and no longer mainained - for a much evolved, German-language version see PCnewsGPT***
+
 # My Changes to privateGPT
 
 This is my fork of [imartinez/privateGPT](https://github.com/imartinez/privateGPT) for playing around with my ideas for changes/improvements.
